@@ -9,10 +9,18 @@ CAM_INDEX     = 0
 # ([x y z rx ry rz], depth_mm, speed_m_s, step_mm)
 POSES = [
     ([  0.481,  0.136, -0.111,  2.889,  1.232,  0.001 ], 6.0, 0.001, 0.01),
-    ([  0.481,  0.136, -0.111,  2.889,  1.232,  0.001 ], 5.0, 0.0001, 0.01),
+    ([  0.432,  0.206, -0.111, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
+    ([  0.511,  0.139, -0.110, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
+    ([  0.587,  0.073, -0.111, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
+    ([  0.646,  0.147, -0.109, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
+    ([  0.576,  0.215, -0.112, -2.885, -1.230, -0.042 ], 6.0, 0.001, 0.01),
+    ([  0.496,  0.277, -0.111, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
+    ([  0.559,  0.361, -0.111, -2.884, -1.230, -0.037 ], 6.0, 0.001, 0.01),
+    ([  0.637,  0.293, -0.110, -2.886, -1.231, -0.033 ], 6.0, 0.001, 0.01),
+    ([  0.712,  0.227, -0.110, -2.886, -1.230, -0.039 ], 6.0, 0.001, 0.01),
 ]
 HOLD_SEC    = 2.0
-RETURN_POSE = [  0.480,  0.135, -0.061,  2.889,  1.232,  0.002 ]
+RETURN_POSE = [  0.552,  0.209,  0.089,  2.889,  1.232,  0.002 ]# [  0.480,  0.135, -0.061,  2.889,  1.232,  0.002 ]
 ROBOT_IP, PORT = "10.10.10.1", 50002
 TCP_OFFSET  = (0, 0, 0.26, 0, 0, 0)
 import sys, signal, time, glob, os
@@ -29,10 +37,10 @@ from rtde_receive import RTDEReceiveInterface
 import setting, find_marker, A_utility
 import json
 
-# if len(sys.argv) > 1 and sys.argv[1].startswith("{"):
-#     cfg = json.loads(sys.argv[1])
-#     MODEL_FILES = cfg.get("MODEL_FILES", MODEL_FILES)
-#     POSES       = cfg.get("POSES", POSES)
+if len(sys.argv) > 1 and sys.argv[1].startswith("{"):
+    cfg = json.loads(sys.argv[1])
+    MODEL_FILES = cfg.get("MODEL_FILES", MODEL_FILES)
+    POSES       = cfg.get("POSES", POSES)
 
 PT_DEVICE = torch.device(DEVICE if torch.cuda.is_available() else "cpu")
 class ModelWrapper:
@@ -108,6 +116,8 @@ def predict_and_show():
                     cv2.FONT_HERSHEY_SIMPLEX,0.55,(0,255,0),2,cv2.LINE_AA)
 
     e_cls,e_conf = ens.argmax(), ens.max()*100
+    with open("/tmp/gelsight_pred.txt", "w") as f:
+        f.write(str(e_cls + 1))
     cv2.putText(frame_bgr, f"[ENS] {e_cls+1}  {e_conf:5.1f}%",
                 (10,y+dy*len(WRAPPERS)), cv2.FONT_HERSHEY_SIMPLEX,
                 0.8,(0,0,255),2,cv2.LINE_AA)
@@ -117,10 +127,10 @@ def predict_and_show():
                 cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,0),1,cv2.LINE_AA)
     cv2.imwrite("/tmp/gelsight_live.jpg", frame_bgr)
 
-    cv2.imshow("GelSight live (ensemble)", frame_bgr)
-    if cv2.waitKey(1)&0xFF==ord('q'):
-        rtde_c.moveL(RETURN_POSE,0.25,0.2)
-        raise KeyboardInterrupt
+    # cv2.imshow("GelSight live (ensemble)", frame_bgr)
+    # if cv2.waitKey(1)&0xFF==ord('q'):
+    #     rtde_c.moveL(RETURN_POSE,0.25,0.2)
+    #     raise KeyboardInterrupt
 
 def rotvec_to_R(rx, ry, rz):
     v=np.asarray([rx,ry,rz]); th=np.linalg.norm(v)

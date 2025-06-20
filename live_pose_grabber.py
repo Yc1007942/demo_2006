@@ -1,24 +1,6 @@
 #!/usr/bin/env python3
 """
-live_pose_grabber.py  – capture UR-5 pose & joint deltas interactively
-
-Usage
------
-1. Put the robot in Freedrive / Teach mode and move it by hand.
-2. Run the script (adjust ROBOT_IP if needed):
-
-       python live_pose_grabber.py --step 0.2
-
-3. Press **Enter** each time you want to record a pose.
-   Press **q + Enter** to quit.
-
-CLI flags
----------
---origin-joints "j1 j2 j3 j4 j5 j6"
-    Provide an explicit joint baseline (deg).  Defaults to the first sample.
---depth   default 0   (mm placeholders for your convenience)
---speed   default 0   (m/s placeholders)
---step    default 0   (mm press-step placeholder)
+python live_pose_grabber.py  
 """
 
 import argparse, sys, time
