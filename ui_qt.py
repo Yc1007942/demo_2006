@@ -1,4 +1,5 @@
-"""streamlit run ui_qt.py
+"""
+streamlit run ui_qt.py
 """
 import streamlit as st, subprocess, json, psutil, signal, time, cv2, os
 from pathlib import Path
@@ -11,7 +12,8 @@ st.sidebar.title("GelSight UR-5 Demo")
 models = sorted(p.name for p in Path(".").glob("*.pt"))
 model_choice = st.sidebar.selectbox("Model checkpoint", models)
 poses = {
-    "Index position": ([  0.481,  0.136, -0.111,  2.889,  1.232,  0.001 ], 6.0,0.02,0.02),
+    "Index position A": ([  0.481,  0.136, -0.111,  2.889,  1.232,  0.001 ], 6.0,0.02,0.02),
+    "Index position B": ([  0.471,  0.153, -0.112,  2.889,  1.232,  0.003 ], 6.0, 0.02, 0.02),
     "Position A": ([  0.432,  0.206, -0.111, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
     "Position B":([  0.511,  0.139, -0.110, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
     "Position C":([  0.587,  0.073, -0.111, -2.886, -1.231, -0.029 ], 6.0, 0.001, 0.01),
